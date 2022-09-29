@@ -9,91 +9,35 @@ namespace BossAZ.Helper
 {
     class WorkHistory
     {
-        private bool ValidateName(string? name) => Regex.IsMatch(name!, @"^[a-zA-Z]+$");
         private string? company;
-        private DateTime? firstDay;
-        private DateTime? lastDay;
-
 
         public string? Company
         {
             get { return company; }
             set
             {
-                if (!ValidateName(value))
+                if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException("Invalid Name");
 
                 company = value;
             }
         }
 
+        public (DateTime FirstDay, DateTime LastDay) WorkedTimes { get; set; }
 
 
-        public DateTime? FirstDay
-        {
-            get { return firstDay; }
-            set
-            {
-                if (value < new DateTime(1950, 1, 1) || value > DateTime.Now)
-                    throw new ArgumentException("Invalid Date");
-
-                firstDay = value;
-            }
-        }
-
-
-
-        public DateTime? LastDay
-        {
-            get { return lastDay; }
-            set
-            {
-                if (value < new DateTime(1950, 1, 1) || value > DateTime.Now)
-                    throw new ArgumentException("Invalid Date");
-
-                lastDay = value;
-            }
-        }
-
-
-
-
-        public WorkHistory(string? company, DateTime firstDay, DateTime lastDay)
+        public WorkHistory(string? company, (DateTime FirstDay, DateTime LastDay) workedTimes)
         {
             Company=company;
-            FirstDay=firstDay;
-            LastDay=lastDay;
+            WorkedTimes=workedTimes;
         }
-
-        public WorkHistory(string? company, DateTime firstDay)
-        {
-            Company=company;
-            FirstDay=firstDay;
-            lastDay = null;
-        }
-
 
         public override string ToString()
         {
-            if (lastDay is null)
-            {
-                return $@"Company: {Company}
-First Day: {FirstDay?.ToShortDateString()}";
 
-            }
-            
-            else if (firstDay is null && lastDay is null)
-            {
-                return $@"Company: {Company}";
-            }
 
-            else
-            {
-                return $@"Company: {Company}
-First Day: {FirstDay?.ToShortDateString()}
-Last Day: {LastDay?.ToShortDateString()}";
-
-            }
+            return $@"Company: {Company}
+Worked Times: {WorkedTimes.FirstDay.ToShortDateString()} - {WorkedTimes.LastDay.ToShortDateString()}";
 
         }
     }

@@ -9,33 +9,17 @@ using BossAZ.Helper;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using Microsoft.VisualBasic;
+using System.Net.Http.Headers;
 
 namespace BossAZ.User
 {
+    
     internal class CV
     {
         private bool ValidateGitLink(string? name) => Regex.IsMatch(name!, @"((git|ssh|http(s)?)|(git@[\w.-]+))(:(//)?)([\w.@\:/~-]+)(\.git)(/)?"); // https://github.com/AliShamil/AliShamil.git Bu sekilde olmalidi
         private bool ValidateLinkedIn(string? name) => Regex.IsMatch(name!, @"((http(s?)://)*([www])*\.|[linkedin])[linkedin/~\-]+\.[a-zA-Z0-9/~\-_,&=\?\.;]+[^\.,\s<]"); //https://www.linkedin.com/feed/
 
-        private void PrintList<T>(List<T> list)
-        {
-            if (list == null)
-                Console.WriteLine("EMPTY");
-            else
-                foreach (var item in list)
-                {
-                    Console.WriteLine(item);
-                }
-        }
-        private bool CheckParse(string[] array)
-        {
-            foreach (var i in array)
-            {
-                if (!int.TryParse(i, out int result))
-                    return false;
-            }
-            return true;
-        }
+
         private string? profession;
         private string? school;
         private double acceptance_rate;
@@ -73,17 +57,17 @@ namespace BossAZ.User
             get { return acceptance_rate; }
             set
             {
-                if (value < 0 || value > 700)
+                if (value < 0.0 || value > 700.0)
                     throw new ArgumentNullException("Invalid AcceptanceRate (0-700)!");
                 acceptance_rate = value;
             }
         }
 
-        public List<string?> Skills { get; set; }
+        public List<string?> Skills { get; set; }  = new List<string>();
 
-        public List<WorkHistory?> WorkHistories { get; set; }
+        public List<WorkHistory?> WorkHistories { get; set; }= new List<WorkHistory?>();
 
-        public List<Language?> Languages { get; set; }
+        public List<Language?> Languages { get; set; } = new List<Language?>(); 
 
         public bool hasHonorsDiploma { get; set; }
 
@@ -125,155 +109,7 @@ namespace BossAZ.User
             LinkedIn=linkedIn;
         }
 
-        public void CreateCv()
-        {
-            bool check = false;
-            string? input;
-            string[] strings;
-            bool checkList = false;
-            while (!check)
-            {
-                try
-                {
-                    Console.WriteLine("Enter Profession: ");
-                    input = Console.ReadLine();
-                    Profession = input;
-
-                    Console.WriteLine("Enter School: ");
-                    input = Console.ReadLine();
-                    School = input;
-
-                    Console.WriteLine("Enter School: ");
-                    input = Console.ReadLine();
-                    School = input;
-
-                    Console.WriteLine("Enter Acceptance Rate: ");
-                    input = Console.ReadLine();
-
-                    if (double.TryParse(input, out acceptance_rate))
-                        AcceptanceRate = double.Parse(input);
-                    else
-                        throw new InvalidCastException(input);
-
-
-                    while (!checkList)
-                    {
-                        Console.WriteLine("Do you want to add WorkHistory?");
-                        switch (Console.ReadLine().ToLower())
-                        {
-                            case "yes":
-
-                                Console.WriteLine("Enter company: ");
-                                input= Console.ReadLine();
-
-
-                                Console.WriteLine("Enter FirstDay of Working(year|month|day): ");
-                                strings = Console.ReadLine().Split('|');
-
-                                if (strings is null)
-                                    throw new ArgumentNullException("First day cannot be null");
-
-                                else
-                                {
-                                    if (!CheckParse(strings))
-                                        throw new InvalidCastException();
-                                }
-                                WorkHistory newHistory = new(input, new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2])));
-
-                                Console.WriteLine("Enter LastDay of Working(year|month|day): ");
-                                strings = Console.ReadLine().Split('|');
-
-                                if (strings is null)
-                                    newHistory.LastDay = null;
-
-                                else
-                                {
-
-                                    if (!CheckParse(strings))
-                                        throw new InvalidCastException();
-
-                                    newHistory.FirstDay = new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2]));
-
-                                }
-
-                                WorkHistories.Add(newHistory);
-                                break;
-                            case "no":
-                                WorkHistories = null;
-                                checkList = true;
-                                break;
-                            default:
-                                Console.Clear();
-                                Console.WriteLine("Unkown Command!");
-                                Thread.Sleep(1500);
-                                continue;
-
-                        }
-                    }
-
-                    checkList = false;
-                    while (!checkList)
-                    {
-                        Console.WriteLine("Do you want to add Language?");
-                        switch (Console.ReadLine().ToLower())
-                        {
-                            case "yes":
-
-                                Console.WriteLine("Enter Language Name: ");
-                                input = Console.ReadLine();
-
-                                LanguageLevels Level;
-                                Console.WriteLine("Enter Level: ");
-                                if (!Enum.TryParse(Console.ReadLine(), out Level))
-                                    throw new InvalidCastException();
-
-                                Language language = new(input, Level);
-
-                                Languages.Add(language);
-
-
-                                break;
-                            case "no":
-                                Languages = null;
-                                checkList = true;
-                                break;
-                            default:
-                                Console.Clear();
-                                Console.WriteLine("Unkown Command!");
-                                Thread.Sleep(1500);
-                                continue;
-
-                        }
-                    }
-
-
-                    Console.WriteLine("Has Honors Diploma (true or false): ");
-                    if (!bool.TryParse(Console.ReadLine(), out bool diploma))
-                        throw new InvalidCastException();
-
-                    hasHonorsDiploma = diploma;
-
-                    Console.WriteLine("Enter GitLink(like this 'https://github.com/AliShamil/AliShamil.git'): ");
-                    input = Console.ReadLine();
-
-                    Gitlink =  input;
-
-                    Console.WriteLine("Enter LinkedIn(like this 'https://www.linkedin.com/feed/'): ");
-                    input = Console.ReadLine();
-
-                    LinkedIn =  input;
-                    check = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.Clear();
-                    Console.WriteLine(ex.Message);
-                    Thread.Sleep(1500);
-                    continue;
-                }
-
-            }
-        }
+        
 
 
         public override string ToString()
@@ -300,7 +136,7 @@ namespace BossAZ.User
             Console.WriteLine();
 
             return $@"
-Honor Diploma{hasHonorsDiploma}
+Honor Diploma: {hasHonorsDiploma}
 Gitlink: {Gitlink}
 LinkedIn: {LinkedIn}";
 
