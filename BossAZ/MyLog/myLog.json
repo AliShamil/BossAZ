@@ -1,0 +1,7 @@
+[14:51:25 INF] Program started  DESKTOP-J1PFA5L 
+[14:51:25 WRN] Could not find file 'C:\Users\Admin\source\repos\BossAZ\BossAZ\WorkerInfo\Workers.json'.  DESKTOP-J1PFA5L 
+[14:51:30 WRN] Deserialization of types without a parameterless constructor, a singular parameterized constructor, or a parameterized constructor annotated with 'JsonConstructorAttribute' is not supported. Type 'BossAZ.User.CV'. Path: $[0].WorkerCV[0] | LineNumber: 0 | BytePositionInLine: 15.  DESKTOP-J1PFA5L 
+[14:51:47 INF] Program started  DESKTOP-J1PFA5L 
+[14:51:47 WRN] Could not find file 'C:\Users\Admin\source\repos\BossAZ\BossAZ\WorkerInfo\Workers.json'.  DESKTOP-J1PFA5L 
+[14:51:57 WRN] Deserialization of types without a parameterless constructor, a singular parameterized constructor, or a parameterized constructor annotated with 'JsonConstructorAttribute' is not supported. Type 'BossAZ.User.CV'. Path: $[0].WorkerCV[0] | LineNumber: 0 | BytePositionInLine: 15.  DESKTOP-J1PFA5L 
+[14:52:04 INF] User back to Start Menu  DESKTOP-J1PFA5L 

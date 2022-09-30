@@ -133,6 +133,250 @@ internal class Program
         }
 
     }
+    static void DeleteCV(ref Worker worker)
+    {
+        string CVId;
+
+        bool check = false;
+        while (!check)
+        {
+            try
+            {
+                Console.Write("Enter CV ID: ");
+                CVId = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(CVId))
+                    throw new ArgumentException("Invalid ID");
+
+                if (!worker.WorkerCV.Any(v => v.Id.ToString()== CVId))
+                    throw new ArgumentException("This CV not Found");
+
+                else
+                {
+                    worker.WorkerCV.Remove(worker.WorkerCV.Find(v => v.Id.ToString()== CVId));
+                    Console.Clear();
+                    Console.WriteLine("CV Removed Successfully !");
+                    Thread.Sleep(1500);
+                    check = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine(ex.Message);
+                Thread.Sleep(1500);
+            }
+
+        }
+    }
+
+    public static CV CreateCV()
+    {
+        CV tempCv = null;
+        string tempProfession, tempSchool, tempgitlink, tempLinkedIn, accRate;
+        double rate;
+        string[] skills;
+        bool hasDiplom = default;
+        List<WorkHistory> workHistories = new();
+        List<Language> languages = new();
+
+
+
+        bool check = false;
+
+        while (!check)
+        {
+            try
+            {
+                Console.Write("Enter Profession: ");
+                tempProfession = Console.ReadLine();
+
+                Console.Write("Enter School: ");
+                tempSchool = Console.ReadLine();
+
+                Console.Write("Enter Acceptance rate: ");
+                accRate = Console.ReadLine();
+                if (!double.TryParse(accRate, out rate))
+                    throw new InvalidCastException("Invalid rate");
+                rate = double.Parse(accRate);
+
+                Console.Write("Enter Skills(use '|' for multiple entering): ");
+                skills = Console.ReadLine().Split("|");
+
+                Console.Write("Enter Gitlink: ");
+                tempgitlink = Console.ReadLine();
+
+                Console.Write("Enter LinkedIn: ");
+                tempLinkedIn = Console.ReadLine();
+
+                Console.WriteLine("Do you want to add WorkHistory?(y or n): ");
+                switch (Console.ReadLine().ToLower())
+                {
+                    case "y":
+                        bool addHistory = false;
+
+                        while (!addHistory)
+                        {
+                            WorkHistory workHistory = createWorkHistory();
+                            workHistories.Add(workHistory);
+                            Console.WriteLine("Do you want add another?(y or n): ");
+                            switch (Console.ReadLine())
+                            {
+                                case "y":
+                                    continue;
+                                case "n":
+                                    addHistory = true;
+                                    break;
+                            }
+                        }
+                        break;
+                    case "n":
+                        break;
+
+                }
+
+                Console.WriteLine("Do you want to add Language?(y or n): ");
+                switch (Console.ReadLine().ToLower())
+                {
+                    case "y":
+                        bool addLanguage = false;
+
+                        while (!addLanguage)
+                        {
+                            Language lang = createLanguage();
+                            languages.Add(lang);
+                            Console.WriteLine("Do you want add another?(y or n): ");
+                            switch (Console.ReadLine())
+                            {
+                                case "y":
+                                    continue;
+                                case "n":
+                                    addLanguage = true;
+                                    break;
+                            }
+                        }
+                        break;
+                    case "n":
+                        break;
+
+                }
+
+                if (languages.Count == 0 && workHistories.Count == 0)
+                {
+                    tempCv = new(tempProfession, tempSchool, rate, skills.ToList(), hasDiplom, tempgitlink, tempLinkedIn);
+
+                }
+                else
+                {
+                    tempCv = new(tempProfession, tempSchool, rate, skills.ToList(), workHistories, languages, hasDiplom, tempgitlink, tempLinkedIn);
+                }
+                check = true;
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine(ex.Message);
+                Thread.Sleep(1500);
+
+            }
+        }
+        return tempCv;
+
+
+    }
+
+
+    static public WorkHistory createWorkHistory()
+    {
+        WorkHistory tempHistory = null;
+        string? company;
+        (DateTime FirstDay, DateTime LastDay) workedTimes;
+        string firstDate;
+        string EndDate;
+        bool check = false;
+
+        while (!check)
+        {
+            Console.Clear();
+            try
+            {
+
+                Console.Write("Enter Company Name: ");
+                company = Console.ReadLine();
+
+                Console.Write("Enter First Job Day(year.month.day): ");
+                firstDate = Console.ReadLine();
+                if (!DateTime.TryParse(firstDate, out workedTimes.FirstDay))
+                    throw new InvalidCastException();
+
+                Console.Write("Enter Last Job Day(year.month.day): ");
+                EndDate = Console.ReadLine();
+
+                if (!DateTime.TryParse(EndDate, out workedTimes.LastDay))
+                    throw new InvalidCastException();
+
+                workedTimes.FirstDay = DateTime.Parse(firstDate);
+                workedTimes.LastDay = DateTime.Parse(EndDate);
+
+                tempHistory = new(company, workedTimes);
+                check = true;
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine(ex.Message);
+                Thread.Sleep(1500);
+            }
+        }
+        return tempHistory;
+
+
+    }
+
+
+    public static Language createLanguage()
+    {
+        Language language = null;
+        string name, languageL;
+        LanguageLevels level = default;
+        bool check = false;
+
+        while (!check)
+        {
+            try
+            {
+                Console.Write("Enter Language name: ");
+                name = Console.ReadLine();
+
+                Console.Write("Enter Level: ");
+                languageL = Console.ReadLine();
+
+                if (!Enum.TryParse(languageL, out level))
+                    throw new InvalidCastException("Incorrect Level!");
+
+                level = Enum.Parse<LanguageLevels>(languageL);
+
+                language = new(name, level);
+
+                check = true;
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.WriteLine(ex.Message);
+                Thread.Sleep(1500);
+
+            }
+
+
+        }
+        return language;
+
+
+    }
+
+
+
 
 
     static string format = @"[{Timestamp:HH:mm:ss} {Level:u3}] {Message} {Exception} {MachineName} {NewLine}";
@@ -146,10 +390,12 @@ internal class Program
     //Log.Fatal("FatalMessage");
 
 
-    static void MainCheck(string[] args)
+    static void Main12(string[] args)
     {
-        Vacancy vc = CreateVacancy();
-        Console.WriteLine(vc);
+        WorkHistory wh = createWorkHistory();
+        Console.WriteLine(wh);
+
+
     }
 
 
@@ -169,7 +415,7 @@ internal class Program
 
 
 
-        //Log.Information("Program started");
+        Log.Information("Program started");
         try
         {
             workers = JSONDeserializeMethod<Worker>("C:\\Users\\Admin\\source\\repos\\BossAZ\\BossAZ\\WorkerInfo\\Workers.json");
@@ -180,7 +426,7 @@ internal class Program
         {
             Console.WriteLine(ex.Message);
             Console.WriteLine("Previous Workers file not found!");
-            //Log.Warning(ex.Message);
+            Log.Warning(ex.Message);
             Console.ReadKey(false);
 
             workers = new();
@@ -195,7 +441,7 @@ internal class Program
         {
             Console.WriteLine(ex.Message);
             Console.WriteLine("Previous Employers file not found!");
-            //Log.Warning(ex.Message);
+            Log.Warning(ex.Message);
             Console.ReadKey(false);
 
             employers = new();
@@ -210,20 +456,19 @@ internal class Program
         {
             Console.WriteLine(ex.Message);
             Console.WriteLine("Previous Job Seekers file not found!");
-            //Log.Warning(ex.Message);
+            Log.Warning(ex.Message);
             Console.ReadKey(false);
 
             jobSeekers = new();
         }
 
-        //Worker worker1 = new("Ali", "Shamil", Azerbaijan.Baku, "0517755590", 19);
-        //Worker worker2 = new("Faiq", "Shamil", Azerbaijan.Baku, "0503534464", 21);
+
 
         DirectoryInfo workerDirectoryInfo = new("C:\\Users\\Admin\\source\\repos\\BossAZ\\BossAZ\\WorkerInfo");
         DirectoryInfo employerDirectoryInfo = new("C:\\Users\\Admin\\source\\repos\\BossAZ\\BossAZ\\EmployerInfo");
+        DirectoryInfo jobSeekerDirectoryInfo = new("C:\\Users\\Admin\\source\\repos\\BossAZ\\BossAZ\\JobSeekersInfo");
 
-        //workers.Add(worker1);
-        //workers.Add(worker2);
+
 
 
 
@@ -236,7 +481,7 @@ internal class Program
         string[] StartMenu = { "Log In", "Sign Up" };
         string[] LogInMenu = { "Log In as Worker", "Log In as Employer" };
         string[] SignUpMenu = { "Sign Up as Worker", "Sign Up as Employer" };
-        string[] WorkerMenu = { "Show Vacancies", "Show Job Seekers", "Join Job Seekers", "Show own Cv", "Add CV", "Delete Cv", "Edit Cv" };
+        string[] WorkerMenu = { "Show Vacancies", "Show Job Seekers", "Join Job Seekers", "Show own Cv", "Add CV", "Delete Cv", "Clear Cv" };
         string[] EmployerMenu = { "Show Vacancies", "Show Job Seekers", "Show own Vacancies", "Add Vacancies", "Delete owm Vacancies", "Clear Vacancies" };
 
 
@@ -267,7 +512,7 @@ internal class Program
                                 switch (key.Key)
                                 {
                                     case ConsoleKey.Enter:
-                                        //Log.Information("User entered Login Menu");
+                                        Log.Information("User entered Login Menu");
                                         switch (index)
                                         {
                                             case 0:
@@ -297,7 +542,7 @@ internal class Program
 
                                                         currentWorker = workers.Find(worker => worker.Name==tempName && worker.Surname==tempSurname);
                                                         checkWorkerLogin = true;
-
+                                                        Log.Information($"{currentWorker.Name} entered succesfully!");
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -310,8 +555,107 @@ internal class Program
                                                 }
 
                                                 #endregion
+                                                
+                                                bool checkWorkerMenu = false;
 
 
+                                                while (!checkWorkerMenu)
+                                                {
+                                                    Console.Clear();
+                                                    ShowMenu(WorkerMenu, index);
+                                                    key = Console.ReadKey();
+                                                    Cursor(key, WorkerMenu.Length, ref index);
+                                                    
+                                                    switch (key.Key)
+                                                    {
+                                                        case ConsoleKey.Enter:
+                                                            switch (index)
+                                                            {
+                                                                case 0:
+                                                                    Console.Clear();
+
+                                                                    foreach (Employer employer in employers)
+                                                                    {
+                                                                        if (employer.Vacancies.Count != 0)
+                                                                            Console.WriteLine(employer);
+                                                                    }
+                                                                    Console.ReadKey(false);
+                                                                    Log.Information($"{currentWorker.Name} showned vacancies!");
+                                                                    break;
+                                                                case 1:
+                                                                    Console.Clear();
+                                                                    if (jobSeekers.Count != 0)
+                                                                    {
+                                                                        foreach (Worker js in jobSeekers)
+                                                                        {
+                                                                            Console.WriteLine(js);
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                        Console.WriteLine("Empty!");
+                                                                    Console.ReadKey(false);
+                                                                    Log.Information($"{currentWorker.Name} showned job seekers!");
+                                                                    break;
+                                                                case 2:
+                                                                    Console.Clear();
+                                                                    if (!jobSeekers.Any(js => js.Name==currentWorker.Name && js.Surname==currentWorker.Surname))
+                                                                    {
+                                                                        jobSeekers.Add(currentWorker);
+                                                                        JSONSerializeMethod(jobSeekerDirectoryInfo, jobSeekers, "JobSeekers");
+                                                                        Console.Clear();
+                                                                        Console.WriteLine("You are jobSeeker now!");
+                                                                        Log.Information($"{currentWorker.Name} joined job seekers!");
+                                                                        Thread.Sleep(1500);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Console.Clear();
+                                                                        Console.WriteLine("You already jobSeekers");
+                                                                        Log.Warning($"{currentWorker.Name} already job seekers!");
+                                                                        Thread.Sleep(1500);
+                                                                    }
+                                                                    break;
+                                                                case 3:
+                                                                    Console.Clear();
+                                                                    if (currentWorker.WorkerCV.Count!=0)
+                                                                        currentWorker.WorkerCV.ForEach(cv => Console.WriteLine(cv));
+                                                                    else
+                                                                        Console.WriteLine("Empty!");
+
+                                                                    Console.ReadKey(false);
+                                                                    Log.Information($"{currentWorker.Name} showned cv!");
+                                                                    break;
+                                                                case 4:
+                                                                    CV tempCV = CreateCV();
+                                                                    currentWorker.WorkerCV.Add(tempCV);
+                                                                    JSONSerializeMethod(workerDirectoryInfo, workers, "Workers");
+                                                                    Console.WriteLine("New CV added successfuly!");
+                                                                    Thread.Sleep(1500);
+                                                                    Log.Information($"{currentWorker.Name} added CV!");
+                                                                    break;
+                                                                case 5:
+                                                                    Console.Clear();
+                                                                    DeleteCV(ref currentWorker);
+                                                                    Log.Information($"{currentWorker.Name} delete CV successfuly!");
+                                                                    break;
+                                                                case 6:
+                                                                    currentWorker.WorkerCV.Clear();
+                                                                    Console.Clear();
+                                                                    JSONSerializeMethod(workerDirectoryInfo, workers, "Workers");
+                                                                    Console.WriteLine("Your CV clear successfuly!");
+                                                                    Log.Information($"{currentWorker.Name} clear CV succesfully!");
+                                                                    Thread.Sleep(1500);
+                                                                    break;
+
+                                                            }
+                                                            break;
+                                                        case ConsoleKey.Backspace:
+                                                            checkWorkerMenu = true;
+                                                            Log.Information($"{currentWorker.Name} went to back Menu!");
+                                                            break;
+                                                    }
+
+                                                }
 
 
                                                 break;
@@ -342,7 +686,7 @@ internal class Program
 
                                                         currentEmployer = employers.Find(employer => employer.Name==tempName && employer.Surname==tempSurname);
                                                         checkEmployerLogin = true;
-
+                                                        Log.Information($"{currentEmployer.Name} entered own Profile!");
                                                     }
                                                     catch (Exception ex)
                                                     {
@@ -355,7 +699,7 @@ internal class Program
                                                 }
 
                                                 #endregion
-                                                //Show Vacancies","Show Job Seekers","Show own Vacancies", "Add Vacancies", "Delete Vacancies", "Edit Vacancies" 
+
                                                 bool checkEmployerMenu = false;
 
 
@@ -380,7 +724,7 @@ internal class Program
                                                                             Console.WriteLine(employer);
                                                                     }
                                                                     Console.ReadKey(false);
-
+                                                                    Log.Information($"{currentEmployer.Name} shown Vacancies!");
                                                                     break;
                                                                 case 1:
                                                                     Console.Clear();
@@ -394,6 +738,7 @@ internal class Program
                                                                     else
                                                                         Console.WriteLine("Empty!");
                                                                     Console.ReadKey(false);
+                                                                    Log.Information($"{currentEmployer.Name} shown job seekers!");
                                                                     break;
                                                                 case 2:
                                                                     Console.Clear();
@@ -401,8 +746,9 @@ internal class Program
                                                                         currentEmployer.Vacancies.ForEach(v => Console.WriteLine(v));
                                                                     else
                                                                         Console.WriteLine("Empty!");
-                                                                    
+
                                                                     Console.ReadKey(false);
+                                                                    Log.Information($"{currentEmployer.Name} shown own Vacancies!");
                                                                     break;
                                                                 case 3:
                                                                     Vacancy tempVacancy = CreateVacancy();
@@ -411,6 +757,7 @@ internal class Program
                                                                     JSONSerializeMethod(employerDirectoryInfo, employers, "Employers");
                                                                     Console.WriteLine("New Vacancy added successfuly!");
                                                                     Thread.Sleep(1500);
+                                                                    Log.Information($"{currentEmployer.Name} added new Vacancy!");
                                                                     break;
                                                                 case 4:
                                                                     Console.Clear();
@@ -421,6 +768,7 @@ internal class Program
                                                                     Console.Clear();
                                                                     JSONSerializeMethod(employerDirectoryInfo, employers, "Employers");
                                                                     Console.WriteLine("Your Vacancies clear successfuly!");
+                                                                    Log.Information($"{currentEmployer.Name} cleared all Vacancies!");
                                                                     Thread.Sleep(1500);
                                                                     break;
 
@@ -428,6 +776,7 @@ internal class Program
                                                             break;
                                                         case ConsoleKey.Backspace:
                                                             checkEmployerMenu = true;
+                                                            Log.Information($"{currentEmployer.Name} went back Menu!");
                                                             break;
                                                     }
 
@@ -436,7 +785,7 @@ internal class Program
                                         }
                                         break;
                                     case ConsoleKey.Backspace:
-                                        // Log.Information("User back to Start Menu");
+                                        Log.Information("User back to Start Menu");
                                         checkLogin = true;
                                         break;
                                 }
@@ -593,6 +942,9 @@ internal class Program
                     break;
                 case ConsoleKey.Backspace:
                     BOSSAZ = true;
+                    Console.Clear();
+                    Console.WriteLine("GOOD BYE!");
+                    Thread.Sleep(1500);
                     break;
             }
 

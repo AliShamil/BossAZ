@@ -20,13 +20,13 @@ namespace BossAZ.User
         private bool ValidateLinkedIn(string? name) => Regex.IsMatch(name!, @"((http(s?)://)*([www])*\.|[linkedin])[linkedin/~\-]+\.[a-zA-Z0-9/~\-_,&=\?\.;]+[^\.,\s<]"); //https://www.linkedin.com/feed/
 
 
+        public Guid Id { get; }
         private string? profession;
         private string? school;
         private double acceptance_rate;
         private string? gitlink;
         private string? linkedIn;
 
-        public Guid Id { get; }
         public string? Profession
         {
             get { return profession; }
@@ -110,7 +110,19 @@ namespace BossAZ.User
             LinkedIn=linkedIn;
         }
 
-        
+        public CV(string? profession, string? school, double acceptanceRate, List<string?> skills,  bool hasHonorsDiploma, string? gitlink, string? linkedIn)
+        {
+            Id = Guid.NewGuid();
+            Profession=profession;
+            School=school;
+            AcceptanceRate=acceptanceRate;
+            Skills=skills;
+            WorkHistories=new();
+            Languages=new();
+            this.hasHonorsDiploma=hasHonorsDiploma;
+            Gitlink=gitlink;
+            LinkedIn=linkedIn;
+        }
 
 
         public override string ToString()
