@@ -8,7 +8,7 @@ namespace BossAZ.Helper
 {
     internal class Vacancy
     {
-
+        public Guid Id{ get; }
         public string Profession { get; set; }
 
         public (byte min, byte max) AgeLimit { get; set; }
@@ -20,6 +20,7 @@ namespace BossAZ.Helper
 
         public Vacancy(string profession, (byte min, byte max) ageLimit, double salary, List<string> requiredKnowledge)
         {
+            Id = Guid.NewGuid();
             Profession=profession;
             AgeLimit=ageLimit;
             Salary=salary;
@@ -29,6 +30,7 @@ namespace BossAZ.Helper
 
         public override string ToString()
         {
+            Console.WriteLine($@"ID: {Id}");
             Console.WriteLine($@"Profession: {Profession}");
 
             Console.WriteLine("\n ~ Required Knowledge ~ ");
@@ -36,8 +38,8 @@ namespace BossAZ.Helper
                 Console.Write($"{rk} \n");
             Console.WriteLine();
 
-            return $@"Age Limit: {AgeLimit.min} - {AgeLimit.max}
-Salary: {Salary}
+            return $@"Age Limit: {AgeLimit.min} - {AgeLimit.max} years old
+Salary: {Salary} AZN
 ";
         }
 

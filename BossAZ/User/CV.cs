@@ -26,7 +26,7 @@ namespace BossAZ.User
         private string? gitlink;
         private string? linkedIn;
 
-
+        public Guid Id { get; }
         public string? Profession
         {
             get { return profession; }
@@ -98,6 +98,7 @@ namespace BossAZ.User
 
         public CV(string? profession, string? school, double acceptanceRate, List<string?> skills, List<WorkHistory?> workHistories, List<Language?> languages, bool hasHonorsDiploma, string? gitlink, string? linkedIn)
         {
+            Id = Guid.NewGuid();
             Profession=profession;
             School=school;
             AcceptanceRate=acceptanceRate;
@@ -114,7 +115,7 @@ namespace BossAZ.User
 
         public override string ToString()
         {
-
+            Console.WriteLine($"Id: {Id}");
             Console.WriteLine($"Profession: {Profession}");
             Console.WriteLine($"Finished School: {School}");
 
